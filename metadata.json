@@ -1,0 +1,6 @@
+{
+  "name": "VideoGamesIL",
+  "description": "VideoGamesIL - מאגר משחקי Sony PlayStation 1, PlayStation 2 ו-PlayStation 3 (גרסאות PAL) ולוח מודעות קהילתי לקנייה ומכירה של משחקים בישראל.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
