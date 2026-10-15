@@ -23,7 +23,7 @@ import { GameCover } from './GameCover';
 interface MarketplaceViewProps {
   listings: MarketplaceListing[];
   onSelectListing: (listing: MarketplaceListing) => void;
-  onNavigateToPublish: () => void;
+  onNavigateToPublish?: () => void;
   initialSearchQuery?: string;
   initialConsole?: 'all' | 'ps1' | 'ps2' | 'ps3';
 }
@@ -31,7 +31,6 @@ interface MarketplaceViewProps {
 export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
   listings,
   onSelectListing,
-  onNavigateToPublish,
   initialSearchQuery = '',
   initialConsole = 'all',
 }) => {
@@ -143,13 +142,9 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
           </p>
         </div>
 
-        <button
-          onClick={onNavigateToPublish}
-          className="px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-900/30 transition-all cursor-pointer flex-shrink-0"
-        >
-          <PlusCircle className="w-4 h-4" />
-          <span>פרסם משחק למכירה</span>
-        </button>
+        <div className="px-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold text-blue-400 flex items-center gap-2 flex-shrink-0">
+          <span>{listings.length} מודעות פעילות בלוח</span>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -501,17 +496,11 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
                 {listings.length > 0 && (
                   <button
                     onClick={handleResetFilters}
-                    className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
+                    className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
                   >
-                    נקה סינונים
+                    איפוס כל הסינונים
                   </button>
                 )}
-                <button
-                  onClick={onNavigateToPublish}
-                  className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-lg shadow-blue-900/30"
-                >
-                  פרסם מודעה חדשה למכירה
-                </button>
               </div>
             </div>
           ) : (

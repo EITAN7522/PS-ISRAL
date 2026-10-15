@@ -12,8 +12,8 @@ import {
 } from 'lucide-react';
 
 interface NavbarProps {
-  activeTab: 'home' | 'database' | 'marketplace' | 'publish' | 'about';
-  setActiveTab: (tab: 'home' | 'database' | 'marketplace' | 'publish' | 'about') => void;
+  activeTab: 'home' | 'database' | 'marketplace' | 'about';
+  setActiveTab: (tab: 'home' | 'database' | 'marketplace' | 'about') => void;
   listingsCount: number;
 }
 
@@ -24,7 +24,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleNavClick = (tab: 'home' | 'database' | 'marketplace' | 'publish' | 'about') => {
+  const handleNavClick = (tab: 'home' | 'database' | 'marketplace' | 'about') => {
     setActiveTab(tab);
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -91,23 +91,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               מאגר משחקים
             </button>
 
-            <button
-              id="nav-btn-marketplace"
-              onClick={() => handleNavClick('marketplace')}
-              className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 relative ${
-                activeTab === 'marketplace'
-                  ? 'bg-blue-600/15 text-blue-400 border border-blue-500/30'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-              }`}
-            >
-              <Search className="w-4 h-4" />
-              חיפוש משחקים למכירה
-              {listingsCount > 0 && (
-                <span className="bg-blue-600 text-white text-xs px-1.5 py-0.2 rounded-full font-bold">
-                  {listingsCount}
-                </span>
-              )}
-            </button>
 
             <button
               id="nav-btn-about"
@@ -123,33 +106,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </nav>
 
-          {/* Call to action "פרסום משחק" button on desktop */}
+          {/* Desktop Right Action: Direct Database Access Button */}
           <div className="hidden sm:flex items-center gap-3">
             <button
-              id="nav-btn-publish"
-              onClick={() => handleNavClick('publish')}
-              className={`px-4 py-2.5 rounded-xl font-medium text-sm transition-all flex items-center gap-2 shadow-lg shadow-blue-900/20 ${
-                activeTab === 'publish'
-                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white ring-2 ring-blue-400'
-                  : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white'
-              }`}
+              onClick={() => handleNavClick('database')}
+              className="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-900/20 cursor-pointer"
             >
-              <PlusCircle className="w-4 h-4" />
-              <span>פרסום משחק למכירה</span>
+              <Disc className="w-4 h-4 text-blue-200" />
+              <span>מאגר המשחקים (PAL)</span>
             </button>
           </div>
 
           {/* Mobile hamburger menu toggle */}
           <div className="flex items-center gap-2 md:hidden">
-            <button
-              id="mobile-publish-quick-btn"
-              onClick={() => handleNavClick('publish')}
-              className="p-2 rounded-lg bg-blue-600 text-white text-xs font-semibold flex items-center gap-1"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>פרסם</span>
-            </button>
-
             <button
               id="mobile-menu-toggle"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -190,30 +159,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Disc className="w-5 h-5 text-slate-400" />
           </button>
 
-          <button
-            onClick={() => handleNavClick('marketplace')}
-            className={`w-full text-right px-4 py-3 rounded-xl text-base font-medium flex items-center justify-between ${
-              activeTab === 'marketplace'
-                ? 'bg-blue-600/15 text-blue-400 border border-blue-500/30'
-                : 'text-slate-300 hover:bg-slate-800'
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <span>חיפוש משחקים למכירה</span>
-              <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full font-bold">
-                {listingsCount}
-              </span>
-            </div>
-            <Search className="w-5 h-5 text-slate-400" />
-          </button>
 
-          <button
-            onClick={() => handleNavClick('publish')}
-            className="w-full text-right px-4 py-3 rounded-xl text-base font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex items-center justify-between shadow-md"
-          >
-            <span>פרסום משחק למכירה</span>
-            <PlusCircle className="w-5 h-5" />
-          </button>
 
           <button
             onClick={() => handleNavClick('about')}

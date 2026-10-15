@@ -6,7 +6,6 @@ import {
   Sparkles, 
   Layers, 
   HelpCircle, 
-  Cpu, 
   Info, 
   ArrowLeft,
   CheckCircle2,
@@ -21,12 +20,11 @@ import {
 } from 'lucide-react';
 
 interface AboutViewProps {
-  onNavigateToPublish: () => void;
+  onNavigateToPublish?: () => void;
   onNavigateToDatabase: () => void;
 }
 
 export const AboutView: React.FC<AboutViewProps> = ({
-  onNavigateToPublish,
   onNavigateToDatabase,
 }) => {
   const [copiedEmail, setCopiedEmail] = useState(false);
@@ -50,7 +48,7 @@ export const AboutView: React.FC<AboutViewProps> = ({
           VideoGamesIL
         </h1>
         <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-          הפלטפורמה הישראלית הראשונה המוקדשת כולה לתיעוד, שימור, קנייה ומכירה של משחקי Sony PlayStation 1 בגרסת PAL.
+          המאגר הישראלי המקיף המוקדש לתיעוד, שימור ואינדוקס משחקי Sony PlayStation 1, PlayStation 2 ו-PlayStation 3 בגרסאות PAL הרשמיות.
         </p>
       </div>
 
@@ -164,86 +162,44 @@ export const AboutView: React.FC<AboutViewProps> = ({
             מדוע התמקדנו בגרסאות PAL?
           </h3>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-            בשנות ה-90 (החל מ-1995 בישראל), קונסולת ה-PlayStation 1 שווקה בארץ בתקן השידור האירופאי <strong>PAL (50Hz)</strong>. 
-            כל המשחקים הרשמיים שנמכרו בחנויות הצעצועים והגיימינג בישראל היו בעלי קודי מוצר <strong>SCES</strong> (משחקי סוני מקוריים) או <strong>SLES</strong> (משחקי צד שלישי).
+            בשנות ה-90 וה-2000, קונסולות ה-PlayStation שווקו בישראל בתקן השידור האירופאי <strong>PAL (50Hz)</strong>. 
+            כל המשחקים הרשמיים שנמכרו בחנויות הצעצועים והגיימינג בישראל היו בעלי קודי מוצר רשמיים (SCES, SLES, BCES, BLES).
           </p>
           <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-400">
-            <strong className="text-white block mb-1">מאפייני דיסק PAL מקורי:</strong>
-            הדיסקים המקוריים של PS1 יוצרו עם תחתית שחורה ייחודית (Black Bottom Disc) ובקופסאות פלסטיק עבות ומסיביות המגנות על הדיסק ועל חוברת ההדרכה.
+            <strong className="text-white block mb-1">מאפייני תקליטורי PAL מקוריים:</strong>
+            תקליטורי PS1 יוצרו עם תחתית שחורה ייחודית (Black Bottom Disc), תקליטורי PS2 בפורמט DVD מקורי (כסוף/כחול), ומשחקי PS3 בפורמט Blu-ray Disc בחדות גבוהה.
           </div>
         </div>
 
-        {/* Block 2: Safe Community Marketplace */}
+        {/* Block 2: Preservation and Cataloguing */}
         <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl space-y-4">
-          <div className="w-10 h-10 rounded-xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center">
-            <ShieldCheck className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center">
+            <Disc className="w-5 h-5" />
           </div>
           <h3 className="text-lg font-bold text-white">
-            לוח מודעות קהילתי ישיר ומאובטח
+            שימור דיגיטלי ואינדוקס מדויק
           </h3>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-            המטרה שלנו היא לחבר בין אספנים, שחקני נוסטלגיה ומוכרים פרטיים בכל רחבי ישראל, ללא עמלות תיווך ובשקיפות מלאה.
+            האתר מהווה אנציקלופדיה מקיפה וארכיון היסטורי חי עבור קהילת הגיימינג והאספנות בישראל.
           </p>
           <ul className="space-y-2 text-xs text-slate-300">
             <li className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-              <span>הגנה על פרטי המוכר – מספר הטלפון מוצג רק בלחיצה יזומה.</span>
+              <CheckCircle2 className="w-4 h-4 text-blue-400 flex-shrink-0" />
+              <span>סינון מקיף וללא כפילויות של מעל 6,000 כותרים מקוריים.</span>
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-              <span>מנגנון מחיקה עצמית של מודעה באמצעות קוד סודי אישי.</span>
+              <CheckCircle2 className="w-4 h-4 text-blue-400 flex-shrink-0" />
+              <span>שיוך קודי מוצר רשמיים (SCES / SLES / BCES / BLES) לכל כותר.</span>
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-              <span>הגנה מפני בוטים וספאם עם בדיקת אימות אנושי.</span>
+              <CheckCircle2 className="w-4 h-4 text-blue-400 flex-shrink-0" />
+              <span>תצוגת עטיפות, ז'אנרים, שנות השקה וחברות פיתוח והפצה מקוריות.</span>
             </li>
           </ul>
         </div>
 
       </div>
 
-      {/* Future Roadmap / Multi-Console Architecture */}
-      <div className="p-8 bg-gradient-to-br from-slate-900 via-indigo-950/40 to-slate-900 border border-indigo-900/50 rounded-3xl space-y-6">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-600/20 text-indigo-400 text-xs font-bold rounded-lg border border-indigo-500/30">
-            <Cpu className="w-4 h-4" />
-            <span>תוכנית התרחבות עתידית</span>
-          </div>
-          <h3 className="text-2xl font-extrabold text-white">
-            מבנה קוד פתוח ומודולרי לקונסולות נוספות
-          </h3>
-          <p className="text-sm text-slate-300 leading-relaxed max-w-3xl">
-            הפרויקט נבנה מראש בארכיטקטורה מודולרית המאפשרת הרחבה פשוטה למאגרי קונסולות נוספות. 
-            כל מודל הנתונים והממשק תומכים בהוספת קטלוגים עתידיים:
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="p-4 bg-slate-950/80 rounded-xl border border-blue-500/40 space-y-1 text-center">
-            <span className="text-xs font-bold text-blue-400 block">שלב 1 (פעיל כעת)</span>
-            <h4 className="font-extrabold text-white text-base">PlayStation 1</h4>
-            <span className="text-[11px] text-emerald-400 font-semibold">2,165 משחקי PAL</span>
-          </div>
-
-          <div className="p-4 bg-slate-950/50 rounded-xl border border-slate-800 space-y-1 text-center opacity-80">
-            <span className="text-xs font-bold text-slate-500 block">שלב 2 (בקרוב)</span>
-            <h4 className="font-extrabold text-white text-base">PlayStation 2</h4>
-            <span className="text-[11px] text-slate-400">דור ה-DVD ו-PAL</span>
-          </div>
-
-          <div className="p-4 bg-slate-950/50 rounded-xl border border-slate-800 space-y-1 text-center opacity-80">
-            <span className="text-xs font-bold text-slate-500 block">שלב 3</span>
-            <h4 className="font-extrabold text-white text-base">Nintendo 64</h4>
-            <span className="text-[11px] text-slate-400">קלטות ורטרו</span>
-          </div>
-
-          <div className="p-4 bg-slate-950/50 rounded-xl border border-slate-800 space-y-1 text-center opacity-80">
-            <span className="text-xs font-bold text-slate-500 block">שלב 4</span>
-            <h4 className="font-extrabold text-white text-base">Xbox Original</h4>
-            <span className="text-[11px] text-slate-400">הדור הראשון</span>
-          </div>
-        </div>
-      </div>
 
       {/* Retro Tips */}
       <div className="p-6 bg-slate-900/60 border border-slate-800 rounded-2xl space-y-4">
@@ -280,15 +236,9 @@ export const AboutView: React.FC<AboutViewProps> = ({
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
         <button
           onClick={onNavigateToDatabase}
-          className="w-full sm:w-auto px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold text-sm transition-colors cursor-pointer"
+          className="w-full sm:w-auto px-8 py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-sm transition-colors cursor-pointer shadow-lg shadow-blue-900/30"
         >
-          צפה במאגר המשחקים
-        </button>
-        <button
-          onClick={onNavigateToPublish}
-          className="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-sm transition-colors cursor-pointer shadow-lg shadow-blue-900/30"
-        >
-          פרסם משחק למכירה באתר
+          צפה במאגר המשחקים המלא (PAL)
         </button>
       </div>
 

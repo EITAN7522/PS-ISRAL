@@ -256,7 +256,7 @@ export const PublishWizard: React.FC<PublishWizardProps> = ({
   };
 
   const stepsInfo = [
-    { num: 1, title: 'בחירת משחק', desc: 'מאגר PS1 / PS2' },
+    { num: 1, title: 'בחירת משחק', desc: 'מאגר PS1 / PS2 / PS3' },
     { num: 2, title: 'עיר מכירה', desc: 'רשימת ערי ישראל א-ב' },
     { num: 3, title: 'מצב המוצר', desc: 'איכות הדיסק והקופסה' },
     { num: 4, title: 'קביעת מחיר', desc: 'מחיר בשקלים (₪)' },
@@ -461,10 +461,14 @@ export const PublishWizard: React.FC<PublishWizardProps> = ({
                               {isSelected && <Check className="w-4 h-4 text-blue-400 flex-shrink-0" />}
                             </div>
                             <div className="flex items-center gap-1.5 text-[10px] text-slate-400 mt-1">
-                              <span className={`px-1.5 py-0.2 rounded font-black text-[9px] ${
-                                isPs2 ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-300'
+                              <span className={`px-2 py-0.5 rounded font-black text-[9px] ${
+                                game.console === 'ps2' 
+                                  ? 'bg-blue-600 text-white' 
+                                  : game.console === 'ps3' 
+                                  ? 'bg-red-600 text-white' 
+                                  : 'bg-slate-800 text-slate-300'
                               }`}>
-                                {isPs2 ? 'PS2' : 'PS1'}
+                                {game.console === 'ps2' ? 'PS2 • שתיים 2' : game.console === 'ps3' ? 'PS3 • שלוש 3' : 'PS1 • אחד 1'}
                               </span>
                               <span className="text-blue-300 font-mono">{game.serialNumber}</span>
                               <span>•</span>

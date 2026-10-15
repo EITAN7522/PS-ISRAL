@@ -23,7 +23,7 @@ interface GameDetailModalProps {
   listings: MarketplaceListing[];
   onClose: () => void;
   onSelectListing: (listing: MarketplaceListing) => void;
-  onPublishForGame: (game: GameItem) => void;
+  onPublishForGame?: (game: GameItem) => void;
 }
 
 export const GameDetailModal: React.FC<GameDetailModalProps> = ({
@@ -31,12 +31,12 @@ export const GameDetailModal: React.FC<GameDetailModalProps> = ({
   listings,
   onClose,
   onSelectListing,
-  onPublishForGame,
 }) => {
   if (!game) return null;
 
+  const isPs3 = game.console === 'ps3';
   const isPs2 = game.console === 'ps2';
-  const consoleTitle = isPs2 ? 'PlayStation 2' : 'PlayStation 1';
+  const consoleTitle = isPs3 ? 'PlayStation 3' : isPs2 ? 'PlayStation 2' : 'PlayStation 1';
 
   const googleImagesUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(`${game.title} ${isPs2 ? 'PS2 PAL cover' : 'PS1 PAL cover'}`)}`;
   const ebaySearchUrl = `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(`${game.title} ${isPs2 ? 'PS2' : 'PS1'} PAL`)}`;
@@ -172,24 +172,6 @@ export const GameDetailModal: React.FC<GameDetailModalProps> = ({
                 </p>
               </div>
 
-              {/* Action: Sell this game */}
-              <div className="p-4 bg-gradient-to-r from-blue-950/40 to-indigo-950/40 border border-blue-800/40 rounded-xl flex items-center justify-between">
-                <div>
-                  <h4 className="text-sm font-bold text-white">יש ברשותך את המשחק הזה?</h4>
-                  <p className="text-xs text-slate-400">פרסם אותו למכירה בקלות ב-5 שלבים פשוטים</p>
-                </div>
-                <button
-                  onClick={() => {
-                    onClose();
-                    onPublishForGame(game);
-                  }}
-                  className="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow transition-all cursor-pointer"
-                >
-                  <PlusCircle className="w-4 h-4" />
-                  <span>פרסם למכירה</span>
-                </button>
-              </div>
-
               {/* Active Listings for this game */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -202,17 +184,8 @@ export const GameDetailModal: React.FC<GameDetailModalProps> = ({
                 {listings.length === 0 ? (
                   <div className="p-6 bg-slate-950/50 rounded-xl border border-slate-800/80 text-center space-y-2">
                     <p className="text-sm text-slate-400">
-                      אין כרגע מודעות מכירה פעילות עבור משחק זה.
+                      אין כרגע מודעות מכירה פעילות עבור משחק זה בלוח.
                     </p>
-                    <button
-                      onClick={() => {
-                        onClose();
-                        onPublishForGame(game);
-                      }}
-                      className="text-xs text-blue-400 hover:text-blue-300 font-semibold underline underline-offset-4"
-                    >
-                      היה הראשון לפרסם מודעה למשחק זה!
-                    </button>
                   </div>
                 ) : (
                   <div className="space-y-2 max-h-56 overflow-y-auto pr-1">

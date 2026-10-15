@@ -2,7 +2,7 @@ import React from 'react';
 import { Gamepad2, Disc, ShieldCheck, Heart, Sparkles } from 'lucide-react';
 
 interface FooterProps {
-  setActiveTab: (tab: 'home' | 'database' | 'marketplace' | 'publish' | 'about') => void;
+  setActiveTab: (tab: 'home' | 'database' | 'marketplace' | 'about') => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({ setActiveTab }) => {
@@ -25,12 +25,12 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab }) => {
               </span>
             </div>
             <p className="text-sm text-slate-400 max-w-md leading-relaxed">
-              האתר הישראלי המרכזי לשימור, חיפוש, קנייה ומכירה של משחקי Sony PlayStation 1 בגרסת PAL. 
+              המאגר הישראלי הרשמי לשימור ואינדוקס משחקי Sony PlayStation 1, PlayStation 2 ו-PlayStation 3 בגרסאות PAL מקוריות. 
               נבנה עבור קהילת אספני הרטרו והגיימרים בישראל.
             </p>
             <div className="flex items-center gap-2 text-xs text-slate-500">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>כל המודעות מנוטרות ונשמרות מקומית במערכת.</span>
+              <span>כל המידע מנוטר ומאומת לפי קודי מוצר רשמיים.</span>
             </div>
           </div>
 
@@ -58,26 +58,10 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab }) => {
               </li>
               <li>
                 <button 
-                  onClick={() => { setActiveTab('marketplace'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="hover:text-blue-400 transition-colors"
-                >
-                  חיפוש משחקים למכירה
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => { setActiveTab('publish'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="hover:text-blue-400 transition-colors text-blue-400 font-medium"
-                >
-                  פרסום משחק למכירה
-                </button>
-              </li>
-              <li>
-                <button 
                   onClick={() => { setActiveTab('about'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                   className="hover:text-blue-400 transition-colors"
                 >
-                  אודות והרחבה עתידית
+                  אודות האתר
                 </button>
               </li>
             </ul>

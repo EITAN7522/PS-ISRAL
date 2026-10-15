@@ -57,17 +57,32 @@ function decodeRdb(buffer) {
     if (byte === 0xc0) return null;
     if (byte === 0xc2) return false;
     if (byte === 0xc3) return true;
+    function decodeBin(b) {
+      let isText = true;
+      for (let i = 0; i < b.length; i++) {
+        const c = b[i];
+        if ((c < 32 || c > 126) && c !== 10 && c !== 13 && c !== 9) {
+          isText = false;
+          break;
+        }
+      }
+      if (isText && b.length > 0) {
+        return b.toString('utf8').replace(/[\x00-\x1F\x7F-\x9F]/g, '').trim();
+      }
+      return b.toString('hex');
+    }
+
     if (byte === 0xc4) {
       const len = buffer.readUInt8(offset); offset += 1;
-      const b = buffer.slice(offset, offset + len); offset += len; return b.toString('hex');
+      const b = buffer.slice(offset, offset + len); offset += len; return decodeBin(b);
     }
     if (byte === 0xc5) {
       const len = buffer.readUInt16BE(offset); offset += 2;
-      const b = buffer.slice(offset, offset + len); offset += len; return b.toString('hex');
+      const b = buffer.slice(offset, offset + len); offset += len; return decodeBin(b);
     }
     if (byte === 0xc6) {
       const len = buffer.readUInt32BE(offset); offset += 4;
-      const b = buffer.slice(offset, offset + len); offset += len; return b.toString('hex');
+      const b = buffer.slice(offset, offset + len); offset += len; return decodeBin(b);
     }
     if (byte === 0xcc) { const v = buffer.readUInt8(offset); offset += 1; return v; }
     if (byte === 0xcd) { const v = buffer.readUInt16BE(offset); offset += 2; return v; }
@@ -156,10 +171,42 @@ function detectGenre(title, consoleType) {
   return 'פעולה והרפתקאות';
 }
 
+function isPromoOrDemoDisc(title) {
+  const t = title.toLowerCase();
+  // Filter out standalone promo and demo discs, but preserve real titles like Demon's Souls, Demolition Inc.
+  if (/\b(demo|sampler|promo|promotional disc|interactive demo|euro demo|opsm|bonus disc|demo disc|demo disk)\b/i.test(t)) {
+    return true;
+  }
+  return false;
+}
+
 function cleanTitleString(title) {
   let t = title.trim();
-  t = t.replace(/\s*\((Europe|UK|France|Germany|Spain|Italy|Australia|En|Fr|De|Es|It|Nl|Sv|v\d+(\.\d+)?|Alt.*|En,.*)\)/gi, '').trim();
-  t = t.replace(/\s*\((Disc \d+|Disk \d+|Bonus Disc)\)/gi, '').trim();
+  let prev;
+  let loops = 0;
+  do {
+    prev = t;
+    loops++;
+    // Remove (Europe, Australia, etc.) and all country variants
+    t = t.replace(/\s*\((Europe|Australia|UK|United Kingdom|France|Germany|Spain|Italy|Greece|Poland|Russia|Netherlands|Holland|Ireland|Belgium|Denmark|Portugal|Sweden|Norway|Finland|Austria|Switzerland|Scandinavia)[^)]*\)/gi, '');
+    // Language combinations e.g. (En,Fr,De) or (Fr,Es,It) or (Es,It)
+    t = t.replace(/\s*\(([A-Za-z]{2,3}(\s*,\s*[A-Za-z]{2,3})*)\)/g, (match, p1) => {
+      if (/^[a-zA-Z,\s]+$/.test(p1) && p1.length < 30) return '';
+      return match;
+    });
+    // Country / Language words inside parentheses
+    t = t.replace(/\s*\((En|Fr|De|Es|It|Nl|Sv|No|Da|Pt|Cs|Pl|Ru|El|Tr|He)\)/gi, '');
+    // Discs and CDs
+    t = t.replace(/\s*\((Disc|Disk|CD)\s*\d+[^)]*\)/gi, '');
+    t = t.replace(/\s*-\s*(Disc|Disk|CD)\s*\d+[^)]*/gi, '');
+    t = t.replace(/\s*\((Disc|Disk|CD)\s+[A-Za-z]\)/gi, '');
+    // Revisions, versions, builds
+    t = t.replace(/\s*\((Rev|Revision|v|Version)\s*[\w\.]+\)/gi, '');
+    t = t.replace(/\s*\((EDC|Alt|Alt \d+|Original|Platinum|Midway Classics|Special Edition|Collector's Edition|Limited Edition|Best of|Value Series|Greatest Hits|Essentials)\)/gi, '');
+    t = t.replace(/\s*\[[^\]]+\]/g, '');
+    t = t.replace(/\s*\((Demo|Preview|Sampler|Interactive Demo|Beta|Promo|Trial)\)/gi, '');
+    t = t.trim();
+  } while (t !== prev && loops < 10);
   return t;
 }
 
@@ -180,6 +227,60 @@ async function run() {
     if (fs.existsSync('scripts/libretro_ps3_boxarts.json')) ps3Boxarts = JSON.parse(fs.readFileSync('scripts/libretro_ps3_boxarts.json'));
   } catch(e) {}
 
+  const ps1BoxMap = new Map();
+  const ps1BoxList = [];
+  for (const b of ps1Boxarts) {
+    const clean = b.replace('.png', '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    ps1BoxMap.set(clean, b);
+    ps1BoxList.push({ file: b, clean, lower: b.toLowerCase() });
+  }
+
+  function getPs1CoverUrl(cleanTitle, rawName) {
+    const norm = cleanTitle.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (ps1BoxMap.has(norm + 'europe')) {
+      return `https://raw.githubusercontent.com/libretro-thumbnails/Sony_-_PlayStation/master/Named_Boxarts/${encodeURIComponent(ps1BoxMap.get(norm + 'europe'))}`;
+    }
+    const matchEur = ps1BoxList.find(x => x.clean.startsWith(norm) && x.lower.includes('europe') && !x.lower.includes('demo'));
+    if (matchEur) {
+      return `https://raw.githubusercontent.com/libretro-thumbnails/Sony_-_PlayStation/master/Named_Boxarts/${encodeURIComponent(matchEur.file)}`;
+    }
+    const matchAnyEur = ps1BoxList.find(x => x.clean.includes(norm) && x.lower.includes('europe'));
+    if (matchAnyEur) {
+      return `https://raw.githubusercontent.com/libretro-thumbnails/Sony_-_PlayStation/master/Named_Boxarts/${encodeURIComponent(matchAnyEur.file)}`;
+    }
+    if (rawName) {
+      return `https://raw.githubusercontent.com/libretro-thumbnails/Sony_-_PlayStation/master/Named_Boxarts/${encodeURIComponent(rawName)}.png`;
+    }
+    return '';
+  }
+
+  const ps2BoxMap = new Map();
+  const ps2BoxList = [];
+  for (const b of ps2Boxarts) {
+    const clean = b.replace('.png', '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    ps2BoxMap.set(clean, b);
+    ps2BoxList.push({ file: b, clean, lower: b.toLowerCase() });
+  }
+
+  function getPs2CoverUrl(cleanTitle, rawName, cleanSerial) {
+    const ps2Match = cleanSerial.match(/(SLES|SCES)-\d{5}/i);
+    if (ps2Match) {
+      return `https://raw.githubusercontent.com/xlenore/ps2-covers/main/covers/default/${ps2Match[0].toUpperCase()}.jpg`;
+    }
+    const norm = cleanTitle.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (ps2BoxMap.has(norm + 'europe')) {
+      return `https://raw.githubusercontent.com/libretro-thumbnails/Sony_-_PlayStation_2/master/Named_Boxarts/${encodeURIComponent(ps2BoxMap.get(norm + 'europe'))}`;
+    }
+    const matchEur = ps2BoxList.find(x => x.clean.startsWith(norm) && x.lower.includes('europe') && !x.lower.includes('demo'));
+    if (matchEur) {
+      return `https://raw.githubusercontent.com/libretro-thumbnails/Sony_-_PlayStation_2/master/Named_Boxarts/${encodeURIComponent(matchEur.file)}`;
+    }
+    if (rawName) {
+      return `https://raw.githubusercontent.com/libretro-thumbnails/Sony_-_PlayStation_2/master/Named_Boxarts/${encodeURIComponent(rawName)}.png`;
+    }
+    return '';
+  }
+
   // 1. PROCESS PS1
   console.log('Downloading Libretro PS1 RDB...');
   const ps1RdbBuffer = await getBuffer('https://raw.githubusercontent.com/libretro/libretro-database/master/rdb/Sony%20-%20PlayStation.rdb');
@@ -189,6 +290,7 @@ async function run() {
   const ps1Map = new Map();
   for (const r of ps1Records) {
     const rawName = r.name || '';
+    if (isPromoOrDemoDisc(rawName)) continue;
     const serial = (r.serial || '').trim().toUpperCase();
     const isPal = serial.startsWith('SCES') || serial.startsWith('SLES') || serial.startsWith('SCED') || serial.startsWith('SLED') || rawName.includes('(Europe)');
     if (!isPal && serial) continue;
@@ -202,12 +304,7 @@ async function run() {
       cleanSerial = `${cleanSerial.slice(0, 4)}-${cleanSerial.slice(4)}`;
     }
 
-    // High Quality Cover
-    let coverUrl = '';
-    const encodedName = encodeURIComponent(rawName);
-    if (rawName) {
-      coverUrl = `https://raw.githubusercontent.com/libretro-thumbnails/Sony_-_PlayStation/master/Named_Boxarts/${encodedName}.png`;
-    }
+    const coverUrl = getPs1CoverUrl(cleanTitle, rawName);
 
     const year = r.releaseyear && r.releaseyear >= 1994 && r.releaseyear <= 2006 ? r.releaseyear : (r.releasemonth ? 1998 : 1998);
     const genre = detectGenre(cleanTitle, 'ps1');
@@ -254,6 +351,7 @@ async function run() {
   const ps2Map = new Map();
   for (const r of ps2Records) {
     const rawName = r.name || '';
+    if (isPromoOrDemoDisc(rawName)) continue;
     const serial = (r.serial || '').trim().toUpperCase();
     const isPal = serial.startsWith('SCES') || serial.startsWith('SLES') || serial.startsWith('SCED') || serial.startsWith('SLED') || rawName.includes('(Europe)');
     if (!isPal && serial) continue;
@@ -267,8 +365,7 @@ async function run() {
       cleanSerial = `${cleanSerial.slice(0, 4)}-${cleanSerial.slice(4)}`;
     }
 
-    const encodedName = encodeURIComponent(rawName);
-    const coverUrl = `https://raw.githubusercontent.com/libretro-thumbnails/Sony_-_PlayStation_2/master/Named_Boxarts/${encodedName}.png`;
+    const coverUrl = getPs2CoverUrl(cleanTitle, rawName, cleanSerial);
 
     const year = r.releaseyear && r.releaseyear >= 2000 && r.releaseyear <= 2014 ? r.releaseyear : 2003;
     const genre = detectGenre(cleanTitle, 'ps2');
@@ -323,6 +420,7 @@ async function run() {
 
     if (nameM && serialM) {
       const rawName = nameM[1];
+      if (isPromoOrDemoDisc(rawName)) continue;
       const serial = serialM[1].trim().toUpperCase();
       const isPal = serial.startsWith('BCES') || serial.startsWith('BLES') || serial.startsWith('NPEB') || serial.startsWith('NPEA') || serial.startsWith('BCED') || serial.startsWith('BLED') || rawName.includes('(Europe)');
       if (!isPal) continue;

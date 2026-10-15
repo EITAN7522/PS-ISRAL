@@ -46,7 +46,8 @@ export const ListingDetailModal: React.FC<ListingDetailModalProps> = ({
   if (!listing) return null;
 
   const isPs2 = listing.console === 'ps2';
-  const consoleName = isPs2 ? 'PlayStation 2' : 'PlayStation 1';
+  const isPs3 = listing.console === 'ps3';
+  const consoleName = isPs3 ? 'PlayStation 3 (PS3 • שלוש 3)' : isPs2 ? 'PlayStation 2 (PS2 • שתיים 2)' : 'PlayStation 1 (PS1 • אחד 1)';
 
   // Clean phone number for links
   const cleanPhone = listing.phone.replace(/[^0-9]/g, '');
@@ -106,6 +107,8 @@ export const ListingDetailModal: React.FC<ListingDetailModalProps> = ({
             <span className={`px-2.5 py-0.5 text-xs font-black rounded uppercase border ${
               isPs2 
                 ? 'bg-blue-600/30 text-blue-300 border-blue-500/40'
+                : isPs3
+                ? 'bg-red-600/30 text-red-300 border-red-500/40'
                 : 'bg-slate-800 text-slate-200 border-slate-700'
             }`}>
               {consoleName} | {listing.region}

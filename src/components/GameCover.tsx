@@ -94,6 +94,12 @@ export const GameCover: React.FC<GameCoverProps> = ({
   const [currentIdx, setCurrentIdx] = useState(0);
   const [hasError, setHasError] = useState(fallbacks.length === 0);
 
+  // Reset state when game or src changes
+  React.useEffect(() => {
+    setCurrentIdx(0);
+    setHasError(fallbacks.length === 0);
+  }, [actualTitle, actualSerial, initialSrc]);
+
   const handleError = () => {
     if (currentIdx + 1 < fallbacks.length) {
       setCurrentIdx(currentIdx + 1);
@@ -135,52 +141,78 @@ export const GameCover: React.FC<GameCoverProps> = ({
           loading="lazy"
         />
       ) : (
-        /* High-Definition Procedural Box Art Mockup if image not found */
-        <div className="w-full h-full flex flex-col justify-between p-3 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 text-white select-none">
-          {/* Top Console Banner */}
-          <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
+        /* High-Definition Procedural Box Art Mockup with authentic retro PlayStation branding */
+        <div className="w-full h-full flex flex-col justify-between p-3 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 text-white select-none relative overflow-hidden">
+          {/* Subtle background disc pattern */}
+          <div className="absolute -right-8 -bottom-8 w-36 h-36 rounded-full border border-slate-800/40 opacity-30 pointer-events-none" />
+          <div className="absolute -right-4 -bottom-4 w-28 h-28 rounded-full border border-slate-700/30 opacity-30 pointer-events-none" />
+
+          {/* Top Console Case Banner */}
+          <div className="flex items-center justify-between border-b border-slate-800/80 pb-2 z-10">
             <div className="flex items-center gap-1.5">
               <span
-                className={`px-2 py-0.5 rounded text-[10px] font-black tracking-wider uppercase ${
+                className={`px-2 py-0.5 rounded text-[10px] font-black tracking-wider uppercase shadow-sm ${
                   isPs3
-                    ? 'bg-gradient-to-r from-red-600 to-rose-700 text-white shadow-sm'
+                    ? 'bg-gradient-to-r from-red-600 via-rose-600 to-red-700 text-white'
                     : isPs2
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'bg-slate-700 text-slate-100'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                    : 'bg-gradient-to-r from-slate-700 to-slate-800 text-slate-100 border border-slate-600/50'
                 }`}
               >
                 {isPs3 ? 'PlayStation 3' : isPs2 ? 'PlayStation 2' : 'PlayStation'}
               </span>
-              <span className="text-[9px] font-bold text-slate-400 bg-slate-800/80 px-1 rounded">
+              <span className="text-[9px] font-bold text-slate-300 bg-slate-800/90 px-1.5 py-0.5 rounded border border-slate-700">
                 PAL
               </span>
             </div>
-            <Disc className={`w-4 h-4 ${isPs3 ? 'text-red-400' : isPs2 ? 'text-blue-400' : 'text-slate-400'} animate-spin-slow`} />
+            <Disc className={`w-4 h-4 ${isPs3 ? 'text-red-400' : isPs2 ? 'text-blue-400' : 'text-slate-400'} animate-spin-slow flex-shrink-0`} />
           </div>
 
-          {/* Center Title Display */}
-          <div className="my-auto text-center px-1 space-y-1.5 py-4">
-            <div className="w-8 h-8 mx-auto rounded-full bg-slate-800/70 border border-slate-700/60 flex items-center justify-center text-slate-400">
-              <ImageIcon className="w-4 h-4" />
+          {/* Center Case Title & Art Display */}
+          <div className="my-auto text-center px-1 space-y-2 py-3 z-10">
+            <div className={`w-9 h-9 mx-auto rounded-full flex items-center justify-center border shadow-md ${
+              isPs3
+                ? 'bg-red-950/40 border-red-800/50 text-red-400'
+                : isPs2
+                ? 'bg-blue-950/40 border-blue-800/50 text-blue-400'
+                : 'bg-slate-800/80 border-slate-700 text-slate-300'
+            }`}>
+              <Disc className="w-5 h-5" />
             </div>
-            <h4 className="font-black text-xs sm:text-sm text-slate-100 line-clamp-3 leading-snug">
+            
+            <h4 className="font-extrabold text-xs sm:text-sm text-slate-100 line-clamp-2 leading-snug">
               {actualTitle}
             </h4>
+
             {actualSerial && (
-              <span className={`inline-block font-mono text-[10px] px-1.5 py-0.5 rounded ${
-                isPs3 
-                  ? 'text-red-400 bg-red-950/60 border border-red-800/40' 
-                  : 'text-blue-400 bg-blue-950/60 border border-blue-800/40'
-              }`}>
-                {actualSerial}
-              </span>
+              <div className="pt-0.5">
+                <span className={`inline-block font-mono text-[10px] px-2 py-0.5 rounded font-bold border ${
+                  isPs3 
+                    ? 'text-red-300 bg-red-950/70 border-red-800/50' 
+                    : isPs2
+                    ? 'text-blue-300 bg-blue-950/70 border-blue-800/50'
+                    : 'text-slate-300 bg-slate-900 border-slate-700'
+                }`}>
+                  {actualSerial}
+                </span>
+              </div>
             )}
           </div>
 
-          {/* Bottom PAL specs bar */}
-          <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
-            <span>{isPs3 ? 'Blu-ray Disc' : isPs2 ? 'DVD-ROM' : 'CD-ROM'}</span>
-            <span className="text-slate-500 font-mono">Sony Official</span>
+          {/* Bottom PAL Media Specs & Quick Google Cover Search */}
+          <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400 z-10">
+            <span className="font-medium">{isPs3 ? 'Blu-ray Disc' : isPs2 ? 'DVD-ROM' : 'CD-ROM (PAL)'}</span>
+            <a
+              href={googleImagesUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex items-center gap-1 text-[10px] text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+              title="חיפוש עטיפה מקורית ב-Google"
+            >
+              <span>עטיפה</span>
+              <ExternalLink className="w-2.5 h-2.5" />
+            </a>
           </div>
         </div>
       )}

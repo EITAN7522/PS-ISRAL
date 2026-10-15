@@ -2,15 +2,12 @@ import React, { useState, useMemo } from 'react';
 import { 
   Gamepad2, 
   Search, 
-  PlusCircle, 
   Disc, 
-  MapPin, 
   Sparkles, 
   ShieldCheck, 
   TrendingUp, 
   Layers, 
   Info, 
-  Clock, 
   ChevronLeft, 
   ArrowLeft,
   Tv,
@@ -18,7 +15,6 @@ import {
   Filter
 } from 'lucide-react';
 import { GameItem, MarketplaceListing, ConsoleType } from '../types';
-import { ConditionBadge } from './ConditionBadge';
 import { GameCover } from './GameCover';
 
 interface HomeViewProps {
@@ -26,7 +22,7 @@ interface HomeViewProps {
   listings: MarketplaceListing[];
   onNavigateToMarketplace: (searchQuery?: string, consoleFilter?: ConsoleType | 'all') => void;
   onNavigateToDatabase: (searchQuery?: string, consoleFilter?: ConsoleType | 'all') => void;
-  onNavigateToPublish: (game?: GameItem) => void;
+  onNavigateToPublish?: (game?: GameItem) => void;
   onSelectListing: (listing: MarketplaceListing) => void;
   onSelectGame: (game: GameItem) => void;
   onNavigateToAbout: () => void;
@@ -37,7 +33,6 @@ export const HomeView: React.FC<HomeViewProps> = ({
   listings,
   onNavigateToMarketplace,
   onNavigateToDatabase,
-  onNavigateToPublish,
   onSelectListing,
   onSelectGame,
   onNavigateToAbout,
@@ -49,9 +44,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (quickSearch.trim()) {
-      onNavigateToMarketplace(quickSearch.trim(), selectedHeroConsole);
+      onNavigateToDatabase(quickSearch.trim(), selectedHeroConsole);
     } else {
-      onNavigateToMarketplace('', selectedHeroConsole);
+      onNavigateToDatabase('', selectedHeroConsole);
     }
   };
 
@@ -150,12 +145,6 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
           </div>
 
-          {/* Short Description */}
-          <p className="text-base sm:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed font-normal">
-            מאגר ישראלי מקיף וללא כפילויות לחיפוש, קטלוג, קנייה ומכירה של משחקי סוני פלייסטיישן מקוריים בגרסאות PAL.
-            מעל 8,000 כותרים עם קודי מוצר רשמיים, עטיפות בחדות גבוהה ולוח מסחר ייעודי לגיימרים ואספנים בישראל.
-          </p>
-
           {/* Console Filter Pills + Big Search Area */}
           <div className="max-w-3xl mx-auto pt-2 space-y-3">
             
@@ -227,7 +216,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     ? 'חפש משחק PS2 (לדוגמה: GTA San Andreas, God of War, Gran Turismo 4...)'
                     : selectedHeroConsole === 'ps3'
                     ? 'חפש משחק PS3 (לדוגמה: The Last of Us, Uncharted 2, Red Dead Redemption...)'
-                    : 'חפש משחק למכירה או במאגר (לדוגמה: Crash, GTA, God of War, The Last of Us...)'
+                    : 'חפש משחק במאגר ה-PAL (לדוגמה: Crash, GTA, God of War, The Last of Us...)'
                 }
                 value={quickSearch}
                 onChange={(e) => setQuickSearch(e.target.value)}
@@ -250,7 +239,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 <button
                   key={term}
                   type="button"
-                  onClick={() => onNavigateToMarketplace(term)}
+                  onClick={() => onNavigateToDatabase(term)}
                   className="px-2.5 py-1 bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white rounded-lg border border-slate-800 transition-colors"
                 >
                   {term}
@@ -259,24 +248,15 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
           </div>
 
-          {/* Action Buttons: "חיפוש משחקים" + "פרסום משחק למכירה" */}
+          {/* Action Button: Browse Database */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <button
-              id="hero-btn-search"
-              onClick={() => onNavigateToMarketplace()}
-              className="w-full sm:w-auto px-8 py-3.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl border border-slate-700 shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer text-sm sm:text-base"
+              id="hero-btn-database"
+              onClick={() => onNavigateToDatabase()}
+              className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold rounded-xl shadow-xl shadow-blue-900/40 flex items-center justify-center gap-2 transition-all cursor-pointer text-sm sm:text-base"
             >
-              <Search className="w-5 h-5 text-blue-400" />
-              <span>חיפוש משחקים למכירה בלוח</span>
-            </button>
-
-            <button
-              id="hero-btn-publish"
-              onClick={() => onNavigateToPublish()}
-              className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold rounded-xl shadow-xl shadow-blue-900/40 flex items-center justify-center gap-2 transition-all cursor-pointer text-sm sm:text-base group"
-            >
-              <PlusCircle className="w-5 h-5 group-hover:rotate-90 transition-transform" />
-              <span>פרסום משחק למכירה בחינם</span>
+              <Disc className="w-5 h-5 text-blue-200" />
+              <span>כניסה למאגר המשחקים המלא (PAL)</span>
             </button>
           </div>
 
@@ -498,133 +478,6 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </div>
 
-      {/* ======================================================== */}
-      {/* SECTION: RECENTLY PUBLISHED GAMES FOR SALE */}
-      {/* ======================================================== */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-emerald-400" />
-              <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
-                משחקים שפורסמו לאחרונה למכירה
-              </h2>
-            </div>
-            <p className="text-xs sm:text-sm text-slate-400">
-              מודעות יד שנייה ואספנות שעלו לאתר על ידי משתמשים בישראל (PS1, PS2, PS3)
-            </p>
-          </div>
-
-          <button
-            onClick={() => onNavigateToMarketplace()}
-            className="text-xs sm:text-sm text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-1 transition-colors"
-          >
-            <span>לכל המודעות בלוח</span>
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-        </div>
-
-        {recentListings.length === 0 ? (
-          <div className="p-8 sm:p-12 text-center bg-slate-900/60 border border-slate-800/80 rounded-3xl space-y-4">
-            <div className="w-14 h-14 mx-auto rounded-2xl bg-blue-950/80 border border-blue-500/20 flex items-center justify-center">
-              <Gamepad2 className="w-7 h-7 text-blue-400" />
-            </div>
-            <div className="space-y-1">
-              <h3 className="text-lg sm:text-xl font-bold text-white">הלוח מוכן למודעות חדשות!</h3>
-              <p className="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
-                יש לך משחקי Sony PlayStation 1, PlayStation 2 או PlayStation 3 שברצונך למכור?
-              </p>
-            </div>
-            <div className="pt-2">
-              <button
-                type="button"
-                onClick={() => onNavigateToPublish()}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-extrabold rounded-xl shadow-lg shadow-blue-900/30 transition-all cursor-pointer"
-              >
-                <PlusCircle className="w-4 h-4" />
-                <span>פרסם מודעה ראשונה בחינם</span>
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recentListings.map((listing) => (
-              <div
-                key={listing.id}
-                onClick={() => onSelectListing(listing)}
-                className="bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-200 cursor-pointer group flex flex-col justify-between"
-              >
-                <div>
-                  {/* Image */}
-                  <div className="relative aspect-[16/10] overflow-hidden bg-slate-950">
-                    <GameCover
-                      src={(listing.images && listing.images[0]) || ''}
-                      title={listing.gameTitle}
-                      consoleType={listing.console}
-                      aspectRatio="custom"
-                      className="w-full h-full"
-                      imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute top-3 right-3 z-10 pointer-events-none">
-                      <ConditionBadge condition={listing.condition} size="sm" />
-                    </div>
-                    <div className={`absolute top-3 left-3 z-10 backdrop-blur-sm px-2 py-0.5 rounded text-[10px] font-bold border ${
-                      listing.console === 'ps3'
-                        ? 'bg-red-950/80 text-red-300 border-red-800'
-                        : listing.console === 'ps2'
-                        ? 'bg-blue-950/80 text-blue-300 border-blue-800'
-                        : 'bg-slate-950/80 text-slate-300 border-slate-700'
-                    }`}>
-                      {listing.console?.toUpperCase() || 'PS1'} • PAL
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-4 space-y-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-bold text-base text-white group-hover:text-blue-400 transition-colors line-clamp-1">
-                        {listing.gameTitle}
-                      </h3>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-xs text-slate-400">
-                      <span className="flex items-center gap-1 text-slate-300">
-                        <MapPin className="w-3.5 h-3.5 text-blue-400" />
-                        {listing.city}
-                      </span>
-                      <span>•</span>
-                      <span>{new Date(listing.createdAt).toLocaleDateString('he-IL')}</span>
-                    </div>
-
-                    <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
-                      {listing.description}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Card Footer with Price and Action */}
-                <div className="px-4 py-3 bg-slate-950/70 border-t border-slate-800/80 flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] text-slate-500 block">מחיר:</span>
-                    <span className="text-lg font-extrabold font-mono text-emerald-400">
-                      {listing.price} ₪
-                    </span>
-                  </div>
-
-                  <button
-                    type="button"
-                    className="px-3 py-1.5 bg-blue-600/20 group-hover:bg-blue-600 text-blue-400 group-hover:text-white rounded-lg text-xs font-bold transition-colors flex items-center gap-1"
-                  >
-                    <span>פרטי המודעה</span>
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
 
       {/* ======================================================== */}
       {/* SECTION: FEATURED PAL CLASSICS ACROSS SONY GENERATIONS */}
@@ -769,10 +622,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 קרא עוד על הקונסולות וההיסטוריה
               </button>
               <button
-                onClick={() => onNavigateToPublish()}
+                onClick={() => onNavigateToDatabase()}
                 className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold transition-colors"
               >
-                פרסם משחק למכירה עכשיו
+                צפה במאגר המשחקים
               </button>
             </div>
           </div>

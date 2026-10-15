@@ -28,7 +28,7 @@ interface DatabaseViewProps {
   games: GameItem[];
   listings: MarketplaceListing[];
   onSelectGame: (game: GameItem) => void;
-  onPublishForGame: (game: GameItem) => void;
+  onPublishForGame?: (game: GameItem) => void;
   initialSearchQuery?: string;
   initialConsole?: 'all' | 'ps1' | 'ps2' | 'ps3';
 }
@@ -37,7 +37,6 @@ export const DatabaseView: React.FC<DatabaseViewProps> = ({
   games,
   listings,
   onSelectGame,
-  onPublishForGame,
   initialSearchQuery = '',
   initialConsole = 'all',
 }) => {
@@ -135,13 +134,9 @@ export const DatabaseView: React.FC<DatabaseViewProps> = ({
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => onPublishForGame(games[0])}
-            className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shadow transition-all cursor-pointer"
-          >
-            <PlusCircle className="w-4 h-4" />
-            <span>פרסם משחק למכירה</span>
-          </button>
+          <div className="px-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold text-blue-400">
+            {games.length.toLocaleString('he-IL')} כותרים מאומתים
+          </div>
         </div>
       </div>
 
@@ -345,6 +340,7 @@ export const DatabaseView: React.FC<DatabaseViewProps> = ({
             {paginatedGames.map((game) => {
               const gameListings = listings.filter((l) => l.gameId === game.id);
               const hasListings = gameListings.length > 0;
+              const isPs3 = game.console === 'ps3';
               const isPs2 = game.console === 'ps2';
 
               return (
@@ -367,11 +363,13 @@ export const DatabaseView: React.FC<DatabaseViewProps> = ({
                       {/* Console Badge */}
                       <div className="absolute top-2 right-2 flex items-center gap-1.5 z-10 pointer-events-none">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase shadow-md ${
-                          isPs2 
+                          isPs3
+                            ? 'bg-gradient-to-r from-red-600 via-rose-600 to-red-700 text-white border border-red-500/40'
+                            : isPs2 
                             ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border border-blue-400/40' 
                             : 'bg-slate-800/95 text-slate-200 border border-slate-600/40'
                         }`}>
-                          {isPs2 ? 'PS2' : 'PS1'}
+                          {isPs3 ? 'PS3' : isPs2 ? 'PS2' : 'PS1'}
                         </span>
                         <span className="bg-slate-950/80 backdrop-blur-sm text-slate-300 px-1.5 py-0.5 rounded text-[10px] font-bold border border-slate-800">
                           {game.region}
